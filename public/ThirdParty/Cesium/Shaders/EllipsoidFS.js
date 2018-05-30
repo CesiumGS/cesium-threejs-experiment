@@ -45,17 +45,17 @@ void main()\n\
     // PERFORMANCE_TODO: When dynamic branching is available, compute ratio of maximum and minimum radii\n\
     // in the vertex shader. Only when it is larger than some constant, march along the ray.\n\
     // Otherwise perform one intersection test which will be the common case.\n\
-    \n\
+\n\
     // Test if the ray intersects a sphere with the ellipsoid's maximum radius.\n\
     // For very oblate ellipsoids, using the ellipsoid's radii for an intersection test\n\
     // may cause false negatives. This will discard fragments before marching the ray forward.\n\
     float maxRadius = max(u_radii.x, max(u_radii.y, u_radii.z)) * 1.5;\n\
     vec3 direction = normalize(v_positionEC);\n\
     vec3 ellipsoidCenter = czm_modelView[3].xyz;\n\
-    \n\
+\n\
     float t1 = -1.0;\n\
     float t2 = -1.0;\n\
-    \n\
+\n\
     float b = -2.0 * dot(direction, ellipsoidCenter);\n\
     float c = dot(ellipsoidCenter, ellipsoidCenter) - maxRadius * maxRadius;\n\
 \n\
@@ -64,22 +64,22 @@ void main()\n\
         t1 = (-b - sqrt(discriminant)) * 0.5;\n\
         t2 = (-b + sqrt(discriminant)) * 0.5;\n\
     }\n\
-    \n\
+\n\
     if (t1 < 0.0 && t2 < 0.0) {\n\
         discard;\n\
     }\n\
-    \n\
+\n\
     float t = min(t1, t2);\n\
     if (t < 0.0) {\n\
         t = 0.0;\n\
     }\n\
-    \n\
+\n\
     // March ray forward to intersection with larger sphere and find\n\
     // actual intersection point with ellipsoid.\n\
     czm_ellipsoid ellipsoid = czm_ellipsoidNew(ellipsoidCenter, u_radii);\n\
     czm_ray ray = czm_ray(t * direction, direction);\n\
     czm_raySegment intersection = czm_rayEllipsoidIntersectionInterval(ray, ellipsoid);\n\
-    \n\
+\n\
     if (czm_isEmpty(intersection))\n\
     {\n\
         discard;\n\
@@ -93,18 +93,22 @@ void main()\n\
 \n\
     gl_FragColor = mix(insideFaceColor, outsideFaceColor, outsideFaceColor.a);\n\
     gl_FragColor.a = 1.0 - (1.0 - insideFaceColor.a) * (1.0 - outsideFaceColor.a);\n\
-    \n\
+\n\
 #ifdef WRITE_DEPTH\n\
 #ifdef GL_EXT_frag_depth\n\
     t = (intersection.start != 0.0) ? intersection.start : intersection.stop;\n\
     vec3 positionEC = czm_pointAlongRay(ray, t);\n\
     vec4 positionCC = czm_projection * vec4(positionEC, 1.0);\n\
+#ifdef LOG_DEPTH\n\
+    czm_writeLogDepth(1.0 + positionCC.w);\n\
+#else\n\
     float z = positionCC.z / positionCC.w;\n\
-    \n\
+\n\
     float n = czm_depthRange.near;\n\
     float f = czm_depthRange.far;\n\
-    \n\
+\n\
     gl_FragDepthEXT = (z * (f - n) + f + n) * 0.5;\n\
+#endif\n\
 #endif\n\
 #endif\n\
 }\n\

@@ -34,9 +34,12 @@ vec4 czm_windowToEyeCoordinates(vec4 fragmentCoordinate)\n\
     vec4 q = vec4(x, y, z, 1.0);\n\
     q /= fragmentCoordinate.w;\n\
 \n\
-    if (czm_inverseProjection != mat4(0.0)) {\n\
+    if (!(czm_inverseProjection == mat4(0.0))) // IE and Edge sometimes do something weird with != between mat4s\n\
+    {\n\
         q = czm_inverseProjection * q;\n\
-    } else {\n\
+    }\n\
+    else\n\
+    {\n\
         float top = czm_frustumPlanes.x;\n\
         float bottom = czm_frustumPlanes.y;\n\
         float left = czm_frustumPlanes.z;\n\

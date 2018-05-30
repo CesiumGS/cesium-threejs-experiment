@@ -9,6 +9,6 @@ define(function() {
  *\n\
  * @see czm_pass\n\
  */\n\
-const float czm_passTranslucent = 6.0;\n\
+const float czm_passTranslucent = 9.0;\n\
 ";
 });

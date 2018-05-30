@@ -13,6 +13,9 @@ attribute vec4 eyeOffset;                                  // eye offset in mete
 attribute vec4 scaleByDistance;                            // near, nearScale, far, farScale\n\
 attribute vec4 pixelOffsetScaleByDistance;                 // near, nearScale, far, farScale\n\
 attribute vec3 distanceDisplayConditionAndDisableDepth;    // near, far, disableDepthTestDistance\n\
+#ifdef VECTOR_TILE\n\
+attribute float a_batchId;\n\
+#endif\n\
 \n\
 varying vec2 v_textureCoordinates;\n\
 \n\
@@ -39,7 +42,7 @@ const float SHIFT_RIGHT3 = 1.0 / 8.0;\n\
 const float SHIFT_RIGHT2 = 1.0 / 4.0;\n\
 const float SHIFT_RIGHT1 = 1.0 / 2.0;\n\
 \n\
-vec4 computePositionWindowCoordinates(vec4 positionEC, vec2 imageSize, float scale, vec2 direction, vec2 origin, vec2 translate, vec2 pixelOffset, vec3 alignedAxis, bool validAlignedAxis, float rotation, bool sizeInMeters)\n\
+vec4 addScreenSpaceOffset(vec4 positionEC, vec2 imageSize, float scale, vec2 direction, vec2 origin, vec2 translate, vec2 pixelOffset, vec3 alignedAxis, bool validAlignedAxis, float rotation, bool sizeInMeters)\n\
 {\n\
     // Note the halfSize cannot be computed in JavaScript because it is sent via\n\
     // compressed vertex attributes that coerce it to an integer.\n\
@@ -71,23 +74,23 @@ vec4 computePositionWindowCoordinates(vec4 positionEC, vec2 imageSize, float sca
         positionEC.xy += halfSize;\n\
     }\n\
 \n\
-    vec4 positionWC = czm_eyeToWindowCoordinates(positionEC);\n\
+    float mpp = czm_metersPerPixel(positionEC);\n\
 \n\
-    if (sizeInMeters)\n\
-    {\n\
-        originTranslate /= czm_metersPerPixel(positionEC);\n\
-    }\n\
-\n\
-    positionWC.xy += originTranslate;\n\
     if (!sizeInMeters)\n\
     {\n\
-        positionWC.xy += halfSize;\n\
+        originTranslate *= mpp;\n\
     }\n\
 \n\
-    positionWC.xy += translate;\n\
-    positionWC.xy += (pixelOffset * czm_resolutionScale);\n\
+    positionEC.xy += originTranslate;\n\
+    if (!sizeInMeters)\n\
+    {\n\
+        positionEC.xy += halfSize * mpp;\n\
+    }\n\
 \n\
-    return positionWC;\n\
+    positionEC.xy += translate * mpp;\n\
+    positionEC.xy += (pixelOffset * czm_resolutionScale) * mpp;\n\
+\n\
+    return positionEC;\n\
 }\n\
 \n\
 void main()\n\
@@ -255,9 +258,13 @@ void main()\n\
     }\n\
 #endif\n\
 \n\
-    vec4 positionWC = computePositionWindowCoordinates(positionEC, imageSize, scale, direction, origin, translate, pixelOffset, alignedAxis, validAlignedAxis, rotation, sizeInMeters);\n\
-    gl_Position = czm_viewportOrthographic * vec4(positionWC.xy, -positionWC.z, 1.0);\n\
+    positionEC = addScreenSpaceOffset(positionEC, imageSize, scale, direction, origin, translate, pixelOffset, alignedAxis, validAlignedAxis, rotation, sizeInMeters);\n\
+    gl_Position = czm_projection * positionEC;\n\
     v_textureCoordinates = textureCoordinates;\n\
+\n\
+#ifdef LOG_DEPTH\n\
+    czm_vertexLogDepth();\n\
+#endif\n\
 \n\
 #ifdef DISABLE_DEPTH_DISTANCE\n\
     float disableDepthTestDistance = distanceDisplayConditionAndDisableDepth.z;\n\
@@ -268,12 +275,16 @@ void main()\n\
 \n\
     if (disableDepthTestDistance != 0.0)\n\
     {\n\
-        gl_Position.z = min(gl_Position.z, gl_Position.w);\n\
-\n\
-        bool clipped = gl_Position.z < -gl_Position.w || gl_Position.z > gl_Position.w;\n\
+        // Don't try to \"multiply both sides\" by w.  Greater/less-than comparisons won't work for negative values of w.\n\
+        float zclip = gl_Position.z / gl_Position.w;\n\
+        bool clipped = (zclip < -1.0 || zclip > 1.0);\n\
         if (!clipped && (disableDepthTestDistance < 0.0 || (lengthSq > 0.0 && lengthSq < disableDepthTestDistance)))\n\
         {\n\
+            // Position z on the near plane.\n\
             gl_Position.z = -gl_Position.w;\n\
+#ifdef LOG_DEPTH\n\
+            czm_vertexLogDepth(vec4(czm_currentFrustum.x));\n\
+#endif\n\
         }\n\
     }\n\
 #endif\n\

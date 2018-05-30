@@ -13,6 +13,8 @@ define(function() {
  * @property {vec3} normalEC Unperturbed surface normal in eye coordinates.\n\
  * @property {mat3} tangentToEyeMatrix Matrix for converting a tangent space normal to eye space.\n\
  * @property {vec3} positionToEyeEC Vector from the fragment to the eye in eye coordinates.  The magnitude is the distance in meters from the fragment to the eye.\n\
+ * @property {float} height The height of the terrain in meters above or below the WGS84 ellipsoid.  Only available for globe materials.\n\
+ * @property {float} slope The slope of the terrain normalized from 0 to 1.  0 is completely vertical, 1 is completely flat.  Only available for globe materials.\n\
  */\n\
 struct czm_materialInput\n\
 {\n\
@@ -22,6 +24,8 @@ struct czm_materialInput\n\
     vec3 normalEC;\n\
     mat3 tangentToEyeMatrix;\n\
     vec3 positionToEyeEC;\n\
+    float height;\n\
+    float slope;\n\
 };\n\
 ";
 });

@@ -1,5 +1,4 @@
 define([
-        './AttributeType',
         '../Core/Cartesian3',
         '../Core/ComponentDatatype',
         '../Core/defaultValue',
@@ -11,9 +10,9 @@ define([
         '../Core/WebGLConstants',
         '../Core/WeightSpline',
         '../ThirdParty/GltfPipeline/getAccessorByteStride',
-        '../ThirdParty/GltfPipeline/numberOfComponentsForType'
+        '../ThirdParty/GltfPipeline/numberOfComponentsForType',
+        './AttributeType'
     ], function(
-        AttributeType,
         Cartesian3,
         ComponentDatatype,
         defaultValue,
@@ -25,7 +24,8 @@ define([
         WebGLConstants,
         WeightSpline,
         getAccessorByteStride,
-        numberOfComponentsForType) {
+        numberOfComponentsForType,
+        AttributeType) {
     'use strict';
 
     /**
@@ -80,7 +80,7 @@ define([
             var accessorByteOffset = defaultValue(accessor.byteOffset, 0);
             var byteOffset = bufferView.byteOffset + accessorByteOffset;
             for (var i = 0; i < count; i++) {
-                var typedArrayView = ComponentDatatype.createArrayBufferView(componentType, source.buffer, byteOffset, numberOfComponents);
+                var typedArrayView = ComponentDatatype.createArrayBufferView(componentType, source.buffer, source.byteOffset + byteOffset, numberOfComponents);
                 if (type === 'SCALAR') {
                     values[i] = typedArrayView[0];
                 } else if (type === 'VEC3') {
@@ -113,6 +113,12 @@ define([
     }
     ConstantSpline.prototype.evaluate = function(time, result) {
         return this._value;
+    };
+    ConstantSpline.prototype.wrapTime = function(time) {
+        return 0.0;
+    };
+    ConstantSpline.prototype.clampTime = function(time) {
+        return 0.0;
     };
 
     ModelAnimationCache.getAnimationSpline = function(model, animationName, animation, samplerName, sampler, input, path, output) {
@@ -184,7 +190,7 @@ define([
 
             if ((componentType === WebGLConstants.FLOAT) && (type === AttributeType.MAT4)) {
                 for (var i = 0; i < count; ++i) {
-                    var typedArrayView = ComponentDatatype.createArrayBufferView(componentType, source.buffer, byteOffset, numberOfComponents);
+                    var typedArrayView = ComponentDatatype.createArrayBufferView(componentType, source.buffer, source.byteOffset + byteOffset, numberOfComponents);
                     matrices[i] = Matrix4.fromArray(typedArrayView);
                     byteOffset += byteStride;
                 }

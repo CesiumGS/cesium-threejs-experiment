@@ -3,7 +3,7 @@ define(function() {
     'use strict';
     return "/**\n\
  * Computes the size of a pixel in meters at a distance from the eye.\n\
- \n\
+\n\
  * @name czm_metersPerPixel\n\
  * @glslFunction\n\
  *\n\
@@ -17,13 +17,13 @@ float czm_metersPerPixel(vec4 positionEC)\n\
     float height = czm_viewport.w;\n\
     float pixelWidth;\n\
     float pixelHeight;\n\
-    \n\
+\n\
     float top = czm_frustumPlanes.x;\n\
     float bottom = czm_frustumPlanes.y;\n\
     float left = czm_frustumPlanes.z;\n\
     float right = czm_frustumPlanes.w;\n\
-    \n\
-    if (czm_sceneMode == czm_sceneMode2D)\n\
+\n\
+    if (czm_sceneMode == czm_sceneMode2D || czm_orthographicIn3D == 1.0)\n\
     {\n\
         float frustumWidth = right - left;\n\
         float frustumHeight = top - bottom;\n\

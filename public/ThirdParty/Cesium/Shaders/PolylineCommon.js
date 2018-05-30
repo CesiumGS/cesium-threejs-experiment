@@ -39,20 +39,17 @@ define(function() {
     positionWC = czm_eyeToWindowCoordinates(vec4(p0, 1.0));\n\
 }\n\
 \n\
-vec4 getPolylineWindowCoordinates(vec4 position, vec4 previous, vec4 next, float expandDirection, float width, bool usePrevious, out float angle) {\n\
+vec4 getPolylineWindowCoordinatesEC(vec4 positionEC, vec4 prevEC, vec4 nextEC, float expandDirection, float width, bool usePrevious, out float angle)\n\
+{\n\
     vec4 endPointWC, p0, p1;\n\
     bool culledByNearPlane, clipped;\n\
 \n\
-    vec4 positionEC = czm_modelViewRelativeToEye * position;\n\
-    vec4 prevEC = czm_modelViewRelativeToEye * previous;\n\
-    vec4 nextEC = czm_modelViewRelativeToEye * next;\n\
-\n\
+#ifdef POLYLINE_DASH\n\
     // Compute the window coordinates of the points.\n\
     vec4 positionWindow = czm_eyeToWindowCoordinates(positionEC);\n\
     vec4 previousWindow = czm_eyeToWindowCoordinates(prevEC);\n\
     vec4 nextWindow = czm_eyeToWindowCoordinates(nextEC);\n\
 \n\
-#ifdef POLYLINE_DASH\n\
     // Determine the relative screen space direction of the line.\n\
     vec2 lineDir;\n\
     if (usePrevious) {\n\
@@ -82,11 +79,11 @@ vec4 getPolylineWindowCoordinates(vec4 position, vec4 previous, vec4 next, float
     float expandWidth = width * 0.5;\n\
     vec2 direction;\n\
 \n\
-    if (czm_equalsEpsilon(previous.xyz - position.xyz, vec3(0.0), czm_epsilon1) || czm_equalsEpsilon(prevWC, -nextWC, czm_epsilon1))\n\
+    if (czm_equalsEpsilon(prevEC.xyz - positionEC.xyz, vec3(0.0), czm_epsilon1) || czm_equalsEpsilon(prevWC, -nextWC, czm_epsilon1))\n\
     {\n\
         direction = vec2(-nextWC.y, nextWC.x);\n\
     }\n\
-    else if (czm_equalsEpsilon(next.xyz - position.xyz, vec3(0.0), czm_epsilon1) || clipped)\n\
+    else if (czm_equalsEpsilon(nextEC.xyz - positionEC.xyz, vec3(0.0), czm_epsilon1) || clipped)\n\
     {\n\
         direction = vec2(prevWC.y, -prevWC.x);\n\
     }\n\
@@ -111,6 +108,14 @@ vec4 getPolylineWindowCoordinates(vec4 position, vec4 previous, vec4 next, float
 \n\
     vec2 offset = direction * expandDirection * expandWidth * czm_resolutionScale;\n\
     return vec4(endPointWC.xy + offset, -endPointWC.z, 1.0);\n\
+}\n\
+\n\
+vec4 getPolylineWindowCoordinates(vec4 position, vec4 previous, vec4 next, float expandDirection, float width, bool usePrevious, out float angle)\n\
+{\n\
+    vec4 positionEC = czm_modelViewRelativeToEye * position;\n\
+    vec4 prevEC = czm_modelViewRelativeToEye * previous;\n\
+    vec4 nextEC = czm_modelViewRelativeToEye * next;\n\
+    return getPolylineWindowCoordinatesEC(positionEC, prevEC, nextEC, expandDirection, width, usePrevious, angle);\n\
 }\n\
 ";
 });

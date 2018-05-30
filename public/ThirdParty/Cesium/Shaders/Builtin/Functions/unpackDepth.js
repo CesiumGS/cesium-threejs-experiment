@@ -2,14 +2,14 @@
 define(function() {
     'use strict';
     return "/**\n\
- * Unpacks a vec3 depth depth value to a float.\n\
+ * Unpacks a vec4 depth value to a float in [0, 1) range.\n\
  *\n\
  * @name czm_unpackDepth\n\
  * @glslFunction\n\
  *\n\
- * @param {vec3} packedDepth The packed depth.\n\
+ * @param {vec4} packedDepth The packed depth.\n\
  *\n\
- * @returns {float} The floating-point depth.\n\
+ * @returns {float} The floating-point depth in [0, 1) range.\n\
  */\n\
  float czm_unpackDepth(vec4 packedDepth)\n\
  {\n\

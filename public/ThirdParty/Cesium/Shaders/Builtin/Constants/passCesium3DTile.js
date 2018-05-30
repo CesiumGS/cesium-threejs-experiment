@@ -9,6 +9,6 @@ define(function() {
  *\n\
  * @see czm_pass\n\
  */\n\
-const float czm_passCesium3DTile = 3.0;\n\
+const float czm_passCesium3DTile = 4.0;\n\
 ";
 });

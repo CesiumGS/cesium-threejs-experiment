@@ -31,7 +31,7 @@ define(function() {
  * Decodes a unit-length vector in 'oct' encoding to a normalized 3-component Cartesian vector.\n\
  * The 'oct' encoding is described in \"A Survey of Efficient Representations of Independent Unit Vectors\",\n\
  * Cigolle et al 2014: http://jcgt.org/published/0003/02/01/\n\
- * \n\
+ *\n\
  * @name czm_octDecode\n\
  * @param {vec2} encoded The oct-encoded, unit-length vector\n\
  * @returns {vec3} The decoded and normalized vector\n\
@@ -45,7 +45,7 @@ define(function() {
  * Decodes a unit-length vector in 'oct' encoding packed into a floating-point number to a normalized 3-component Cartesian vector.\n\
  * The 'oct' encoding is described in \"A Survey of Efficient Representations of Independent Unit Vectors\",\n\
  * Cigolle et al 2014: http://jcgt.org/published/0003/02/01/\n\
- * \n\
+ *\n\
  * @name czm_octDecode\n\
  * @param {float} encoded The oct-encoded, unit-length vector\n\
  * @returns {vec3} The decoded and normalized vector\n\
@@ -57,12 +57,12 @@ define(function() {
     float y = (temp - x) * 256.0;\n\
     return czm_octDecode(vec2(x, y));\n\
  }\n\
- \n\
+\n\
 /**\n\
  * Decodes three unit-length vectors in 'oct' encoding packed into two floating-point numbers to normalized 3-component Cartesian vectors.\n\
  * The 'oct' encoding is described in \"A Survey of Efficient Representations of Independent Unit Vectors\",\n\
  * Cigolle et al 2014: http://jcgt.org/published/0003/02/01/\n\
- * \n\
+ *\n\
  * @name czm_octDecode\n\
  * @param {vec2} encoded The packed oct-encoded, unit-length vectors.\n\
  * @param {vec3} vector1 One decoded and normalized vector.\n\
@@ -83,6 +83,6 @@ define(function() {
     vector2 = czm_octDecode(encodedFloat2);\n\
     vector3 = czm_octDecode(vec2(x, y));\n\
  }\n\
- \n\
+\n\
 ";
 });

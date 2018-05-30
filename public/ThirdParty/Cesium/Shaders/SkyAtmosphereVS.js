@@ -2,11 +2,11 @@
  * @license
  * Copyright (c) 2000-2005, Sean O'Neil (s_p_oneil@hotmail.com)
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * * Redistributions of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
  * * Redistributions in binary form must reproduce the above copyright notice,
@@ -15,7 +15,7 @@
  * * Neither the name of the project nor the names of its contributors may be
  *   used to endorse or promote products derived from this software without
  *   specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -36,11 +36,11 @@ define(function() {
  * @license\n\
  * Copyright (c) 2000-2005, Sean O'Neil (s_p_oneil@hotmail.com)\n\
  * All rights reserved.\n\
- * \n\
+ *\n\
  * Redistribution and use in source and binary forms, with or without\n\
  * modification, are permitted provided that the following conditions\n\
  * are met:\n\
- * \n\
+ *\n\
  * * Redistributions of source code must retain the above copyright notice,\n\
  *   this list of conditions and the following disclaimer.\n\
  * * Redistributions in binary form must reproduce the above copyright notice,\n\
@@ -49,7 +49,7 @@ define(function() {
  * * Neither the name of the project nor the names of its contributors may be\n\
  *   used to endorse or promote products derived from this software without\n\
  *   specific prior written permission.\n\
- * \n\
+ *\n\
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\n\
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n\
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n\
@@ -63,10 +63,10 @@ define(function() {
  *\n\
  * Modifications made by Analytical Graphics, Inc.\n\
  */\n\
- \n\
+\n\
  // Code:  http://sponeil.net/\n\
  // GPU Gems 2 Article:  http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter16.html\n\
-  \n\
+\n\
 attribute vec4 position;\n\
 \n\
 uniform vec4 u_cameraAndRadiiAndDynamicAtmosphereColor; // Camera height, outer radius, inner radius, dynamic atmosphere color flag\n\
@@ -83,7 +83,7 @@ const vec3 InvWavelength = vec3(\n\
     9.473284437923038, // Green = 1.0 / Math.pow(0.570, 4.0)\n\
     19.643802610477206); // Blue = 1.0 / Math.pow(0.475, 4.0)\n\
 const float rayleighScaleDepth = 0.25;\n\
-          \n\
+\n\
 const int nSamples = 2;\n\
 const float fSamples = 2.0;\n\
 \n\

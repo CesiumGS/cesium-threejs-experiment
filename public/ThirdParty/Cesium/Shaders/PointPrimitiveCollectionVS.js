@@ -150,8 +150,11 @@ void main()\n\
     }\n\
 #endif\n\
 \n\
-    vec4 positionWC = czm_eyeToWindowCoordinates(positionEC);\n\
+#ifdef LOG_DEPTH\n\
+    czm_vertexLogDepth(czm_projection * positionEC);\n\
+#endif\n\
 \n\
+    vec4 positionWC = czm_eyeToWindowCoordinates(positionEC);\n\
     gl_Position = czm_viewportOrthographic * vec4(positionWC.xy, -positionWC.z, 1.0);\n\
 \n\
 #ifdef DISABLE_DEPTH_DISTANCE\n\
@@ -163,12 +166,16 @@ void main()\n\
 \n\
     if (disableDepthTestDistance != 0.0)\n\
     {\n\
-        gl_Position.z = min(gl_Position.z, gl_Position.w);\n\
-\n\
-        bool clipped = gl_Position.z < -gl_Position.w || gl_Position.z > gl_Position.w;\n\
+        // Don't try to \"multiply both sides\" by w.  Greater/less-than comparisons won't work for negative values of w.\n\
+        float zclip = gl_Position.z / gl_Position.w;\n\
+        bool clipped = (zclip < -1.0 || zclip > 1.0);\n\
         if (!clipped && (disableDepthTestDistance < 0.0 || (lengthSq > 0.0 && lengthSq < disableDepthTestDistance)))\n\
         {\n\
+            // Position z on the near plane.\n\
             gl_Position.z = -gl_Position.w;\n\
+#ifdef LOG_DEPTH\n\
+            czm_vertexLogDepth(vec4(czm_currentFrustum.x));\n\
+#endif\n\
         }\n\
     }\n\
 #endif\n\

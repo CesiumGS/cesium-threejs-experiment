@@ -8,12 +8,12 @@ attribute float batchId;\n\
 \n\
 varying vec4 v_color;\n\
 \n\
-void main() \n\
+void main()\n\
 {\n\
     vec4 p = czm_computePosition();\n\
 \n\
     v_color = color;\n\
-    \n\
+\n\
     gl_Position = czm_modelViewProjectionRelativeToEye * p;\n\
 }\n\
 ";

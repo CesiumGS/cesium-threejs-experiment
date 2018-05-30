@@ -7,10 +7,10 @@ void main()\n\
 {\n\
     // TODO: make arbitrary ellipsoid\n\
     czm_ellipsoid ellipsoid = czm_getWgs84EllipsoidEC();\n\
-    \n\
+\n\
     vec3 direction = normalize(positionEC.xyz);\n\
     czm_ray ray = czm_ray(vec3(0.0), direction);\n\
-    \n\
+\n\
     czm_raySegment intersection = czm_rayEllipsoidIntersectionInterval(ray, ellipsoid);\n\
     if (!czm_isEmpty(intersection))\n\
     {\n\
@@ -20,6 +20,8 @@ void main()\n\
     {\n\
         discard;\n\
     }\n\
+\n\
+    czm_writeLogDepth();\n\
 }\n\
 ";
 });
