@@ -6,14 +6,18 @@ define([
         'Cesium/Scene/ShadowMode',
         'Cesium/Core/Color',
         'Cesium/Core/Math',
-        'Three/three.min'
+        'Three/three.min',
+        'MTLLoader',
+        'OBJLoader'
     ], function(
         CesiumCartesian3,
         CesiumViewer,
         CesiumShadowMode,
         CesiumColor,
         CesiumMath,
-        THREE) {
+        THREE,
+        MTLLoader,
+        OBJLoader) {
   'use strict';
 
   var loadingIndicator = document.getElementById('loadingIndicator');
@@ -52,7 +56,6 @@ define([
       sceneModePicker:false,
       navigationHelpButton:false,
       infoBox : false,
-      navigationHelpButton:false,
       navigationInstructionsInitiallyVisible:false,
       animation : false,
       timeline : false,
@@ -67,7 +70,7 @@ define([
           depth:true,
           stencil:false,
           anialias:false
-        },
+        }
       },
       targetFrameRate:60,
       resolutionScale:0.1,
@@ -120,7 +123,7 @@ define([
           minWGS84[0], minWGS84[1],
           maxWGS84[0], minWGS84[1],
           maxWGS84[0], maxWGS84[1],
-          minWGS84[0], maxWGS84[1],
+          minWGS84[0], maxWGS84[1]
         ]),
         material : CesiumColor.RED.withAlpha(0.2)
       }
@@ -143,7 +146,7 @@ define([
     latheMesh.position.z += 15000.0; // translate "up" in Three.js space so the "bottom" of the mesh is the handle
     latheMesh.rotation.x = Math.PI / 2; // rotate mesh for Cesium's Y-up system
     var latheMeshYup = new THREE.Group();
-    latheMeshYup.add(latheMesh)
+    latheMeshYup.add(latheMesh);
     three.scene.add(latheMeshYup); // don’t forget to add it to the Three.js scene manually
 
     //Assign Three.js object mesh to our object array
@@ -160,7 +163,7 @@ define([
     dodecahedronMesh.position.z += 15000.0; // translate "up" in Three.js space so the "bottom" of the mesh is the handle
     dodecahedronMesh.rotation.x = Math.PI / 2; // rotate mesh for Cesium's Y-up system
     var dodecahedronMeshYup = new THREE.Group();
-    dodecahedronMeshYup.add(dodecahedronMesh)
+    dodecahedronMeshYup.add(dodecahedronMesh);
     three.scene.add(dodecahedronMeshYup); // don’t forget to add it to the Three.js scene manually
 
     //Assign Three.js object mesh to our object array
@@ -169,6 +172,29 @@ define([
     _3DOB.minWGS84 = minWGS84;
     _3DOB.maxWGS84 = maxWGS84;
     _3Dobjects.push(_3DOB);
+
+    // obj sphere
+    var mtlLoader = new THREE.MTLLoader();
+    mtlLoader.load('sphere.mtl', function(materials) {
+      materials.preload();
+      var objLoader = new THREE.OBJLoader();
+      objLoader.setMaterials(materials);
+      objLoader.load('sphere.obj', function (object) {
+        object.scale.set(5000,5000,5000); //scale object to be visible at planet scale
+        object.position.z += 30000.0; // translate "up" in Three.js space so the "bottom" of the mesh is the handle
+        object.rotation.x = Math.PI / 2; // rotate mesh for Cesium's Y-up system
+        var objectYup = new THREE.Group();
+        objectYup.add(object);
+        three.scene.add(objectYup); // don’t forget to add it to the Three.js scene manually
+
+        //Assign Three.js object to our object array
+        _3DOB = new _3DObject();
+        _3DOB.threeMesh = objectYup;
+        _3DOB.minWGS84 = minWGS84;
+        _3DOB.maxWGS84 = maxWGS84;
+        _3Dobjects.push(_3DOB);
+      });
+    });
   }
 
   // Looping Renderer
